@@ -11,12 +11,18 @@ const header = document.createElement("div");
 header.classList.add("header");
 page.appendChild(header);
 
+const logoName = document.createElement("h1")
+logoName.classList.add("logoName");
+logoName.textContent = "JS-ONLY LIBRARY"
+header.appendChild(logoName)
+
 
 //add book button
 const newBtn = document.createElement("button");
 newBtn.classList.add("newBtn");
 newBtn.textContent = "ADD BOOK";
 header.appendChild(newBtn);
+
 
 
 
