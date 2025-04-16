@@ -1,176 +1,160 @@
 const myLibrary = [];
-//create main page div
+
+// Create main page div
 const page = document.createElement("div");
 page.classList.add("page");
+document.body.appendChild(page);
 
-const body = document.body;
-body.appendChild(page);
-
-//creating header
+// Creating header
 const header = document.createElement("div");
 header.classList.add("header");
 page.appendChild(header);
 
-const logoName = document.createElement("h1")
+const logoName = document.createElement("h1");
 logoName.classList.add("logoName");
-logoName.textContent = "JS-ONLY LIBRARY"
-header.appendChild(logoName)
+logoName.textContent = "JS-ONLY LIBRARY";
+header.appendChild(logoName);
 
-
-//add book button
+// Add book button
 const newBtn = document.createElement("button");
 newBtn.classList.add("newBtn");
 newBtn.textContent = "ADD BOOK";
 header.appendChild(newBtn);
 
-
-
-
-
-//creating the card box
+// Creating the card box
 const cardBox = document.createElement("div");
 cardBox.classList.add("cardBox");
 page.appendChild(cardBox);
 
-
-
-
-
-
-
-//constructor function
+// Constructor function for Book objects
 function Book(title, author, pages, read) {
-    if (!new.target) {
-        throw Error("You must use the 'new' operator");
-    };
+  if (!new.target) {
+    throw Error("You must use the 'new' operator");
+  }
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.read = read;
+  this.id = crypto.randomUUID();
+}
 
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-};
-
-//adding a method to the prototype - saving memory.
+// Prototype method for returning book info
 Book.prototype.info = function() {
-    return `${this.title}
-            ${this.author}
-            ${this.pages} pages
-            Read: ${this.read}`
+  return `${this.title}
+${this.author}
+${this.pages} pages
+Read: ${this.read}`;
 };
 
-//manually creating a new book
-//const hobbit = new Book("hobbit", "author", 292, "Y");
-//console.log(hobbit.info());
+// Function to create and append a card for a book, including a delete button
+function createCard(book) {
+  // Create the card container
+  const card = document.createElement("div");
+  card.classList.add("card");
 
+  // Create a div for the book info text and append it to the card
+  const infoDiv = document.createElement("div");
+  infoDiv.textContent = book.info();
+  card.appendChild(infoDiv);
 
-// creating book and pushing into array (library)
+  // Create the delete button
+  const deleteBtn = document.createElement("button");
+  deleteBtn.classList.add("delete-btn");
+  deleteBtn.textContent = "x";
+
+  // Add an event listener to handle deletion of the card and its book
+  deleteBtn.addEventListener("click", () => {
+    // Remove the book from the library array using its unique ID
+    const index = myLibrary.findIndex((b) => b.id === book.id);
+    if (index !== -1) {
+      myLibrary.splice(index, 1);
+    }
+    // Remove the card element from the DOM
+    card.remove();
+  });
+
+  // Append the delete button to the card
+  card.appendChild(deleteBtn);
+  // Append the card to the cardBox container
+  cardBox.appendChild(card);
+}
+
+// Function to add a book to the library and create its corresponding card
 function addBook(title, author, pages, read) {
-    const addition = new Book(title, author, pages, read);
-    myLibrary.push(addition);
+  const newBook = new Book(title, author, pages, read);
+  myLibrary.push(newBook);
+  createCard(newBook);
+}
 
-    
-};
-
+// Create an initial book for testing
 addBook("hobbit", "J.R.Tolkien", 292, "y");
-//logging result of hobbit.info() in library for testing
 console.log(myLibrary[0].info());
 
+// Adding event listener to the ADD BOOK button for opening the input form
+newBtn.addEventListener("click", function() {
+  const inputForm = document.createElement("form");
+  inputForm.classList.add("inputForm");
 
-//loop through array to display
+  // Field for Title
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.placeholder = "Title";
+  titleInput.required = true;
+  titleInput.classList.add("inp");
+  inputForm.appendChild(titleInput);
 
-for (let i of myLibrary) {
-    const card = document.createElement("div");
-    card.classList.add("card")
-    card.textContent = i.info();
-    cardBox.appendChild(card);
-    
-};
+  // Field for Author
+  const authorInput = document.createElement("input");
+  authorInput.type = "text";
+  authorInput.placeholder = "Author";
+  authorInput.required = true;
+  authorInput.classList.add("inp");
+  inputForm.appendChild(authorInput);
 
-//adding event listener to addBook btn
-newBtn.addEventListener("click", function(e) {
-    const inputForm = document.createElement("form");
-    inputForm.classList.add("inputForm");
+  // Field for Pages
+  const pagesInput = document.createElement("input");
+  pagesInput.type = "number";
+  pagesInput.placeholder = "0";
+  pagesInput.required = true;
+  pagesInput.classList.add("inp");
+  inputForm.appendChild(pagesInput);
 
+  // Field for Read status – using a checkbox here
+  const readLabel = document.createElement("label");
+  readLabel.textContent = "Read? ";
+  const readInput = document.createElement("input");
+  readInput.type = "checkbox";
+  readInput.classList.add("inp");
+  readLabel.appendChild(readInput);
+  inputForm.appendChild(readLabel);
 
-    
-    //fields
-    const titleInput = document.createElement("input");
-    titleInput.type = "text";
-    titleInput.placeholder = "Title";
-    titleInput.required = true;
-    titleInput.classList.add("inp");
-    inputForm.appendChild(titleInput);
+  // Submit button for the form
+  const submitBtn = document.createElement("button");
+  submitBtn.type = "submit";
+  submitBtn.textContent = "Add";
+  submitBtn.classList.add("submitBtn");
+  inputForm.appendChild(submitBtn);
 
-    const authorInput = document.createElement("input");
-    authorInput.type = "text";
-    authorInput.placeholder = "author";
-    authorInput.required = true;
-    authorInput.classList.add("inp");
-    inputForm.appendChild(authorInput);
-    
+  page.appendChild(inputForm);
 
-    const pagesInput = document.createElement("input");
-    pagesInput.type = "number";
-    pagesInput.placeholder = "0";
-    pagesInput.required = true;
-    pagesInput.classList.add("inp");
-    inputForm.appendChild(pagesInput);
+  // Disable the ADD BOOK button so multiple forms aren’t shown
+  newBtn.disabled = true;
 
-    const readInput = document.createElement("input");
-    readInput.type = "text";
-    readInput.placeholder = "Y/N";
-    readInput.required = true;
-    readInput.classList.add("inp");
-    inputForm.appendChild(readInput);
+  // Handle form submission for adding a new book
+  inputForm.addEventListener("submit", function(e) {
+    e.preventDefault();
 
-    //submit button
-    const submitBtn = document.createElement("button");
-    submitBtn.type = "submit";
-    submitBtn.textContent = "Add";
-    submitBtn.classList.add("submitBtn")
-    inputForm.appendChild(submitBtn);
+    // Retrieve the values from the form inputs
+    const title = titleInput.value;
+    const author = authorInput.value;
+    const pages = pagesInput.value;
+    const read = readInput.checked ? "y" : "n";
 
-    page.appendChild(inputForm);
-    
-    //disable add book button so we dont add multiple forms
-    newBtn.disabled = true;
+    // Add the book; addBook() automatically creates and appends the card
+    addBook(title, author, pages, read);
 
-    //submitting form x
-    inputForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        //retrieve the value from form inputs
-
-        const title = titleInput.value;
-        const author = authorInput.value;
-        const pages = pagesInput.value;
-        const read = readInput.checked ? "y" : "n";
-
-        addBook(title, author, pages, read);
-
-        //create new card element for new book
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.textContent = myLibrary[myLibrary.length - 1].info();
-        cardBox.appendChild(card);
-
-        // remove inputForm so its not still there after adding book
-        page.removeChild(inputForm);
-
-        newBtn.disabled = false; // re-enabling forms.
-
-
-
-
-    });
-
-
-    
+    // Remove the form from the page and re-enable the ADD BOOK button
+    page.removeChild(inputForm);
+    newBtn.disabled = false;
+  });
 });
-
-
-
-
-
-
-
