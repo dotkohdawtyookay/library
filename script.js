@@ -125,6 +125,7 @@ newBtn.addEventListener("click", function() {
   const readInput = document.createElement("input");
   readInput.type = "checkbox";
   readInput.classList.add("inp");
+  readLabel.classList.add("readLabel");
   readLabel.appendChild(readInput);
   inputForm.appendChild(readLabel);
 

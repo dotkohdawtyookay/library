@@ -87,6 +87,10 @@
     cursor: pointer;
 }
 
+
+.readLabel {
+    color: #ff4081;
+}
 .inputForm {
     display: flex;
     flex-direction: column;
